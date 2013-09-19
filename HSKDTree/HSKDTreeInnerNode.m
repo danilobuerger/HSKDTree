@@ -39,8 +39,8 @@
 #pragma mark - NSObject methods
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"Node (%p) { depth: %i, leafsCount: %i, %@ }",
-			self, self.depth, self.leafsCount, NSStringFromHSKDTreeLine(self.line)];
+	return [NSString stringWithFormat:@"Node (%p) { depth: %lu, leafsCount: %lu, %@ }",
+			self, (unsigned long) self.depth, (unsigned long) self.leafsCount, NSStringFromHSKDTreeLine(self.line)];
 }
 
 #pragma mark - HSKDTreeNode methods

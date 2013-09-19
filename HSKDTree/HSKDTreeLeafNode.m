@@ -57,7 +57,8 @@
 #pragma mark - NSObject methods
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"Leaf (%p) { depth: %i, %@ }", self, self.depth, NSStringFromHSKDTreePoint(self.point)];
+	return [NSString stringWithFormat:@"Leaf (%p) { depth: %lu, %@ }", self,
+			(unsigned long) self.depth, NSStringFromHSKDTreePoint(self.point)];
 }
 
 #pragma mark - Custom methods
