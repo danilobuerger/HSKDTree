@@ -26,7 +26,7 @@
 
 @interface HSKDTree ()
 
-@property (nonatomic) unsigned char dimensions;
+@property (nonatomic) NSUInteger dimensions;
 @property (nonatomic) Class innerNodeClass;
 
 @property (nonatomic, strong) HSKDTreeNode *rootNode;
@@ -60,7 +60,7 @@
 	return nil;
 }
 
-- (id)initWithDimensions:(unsigned char)dimensions innerNodeClass:(Class)innerNodeClass {
+- (id)initWithDimensions:(NSUInteger)dimensions innerNodeClass:(Class)innerNodeClass {
 	NSParameterAssert(dimensions >= 2);
 	NSParameterAssert(innerNodeClass == NULL || [innerNodeClass isSubclassOfClass:[HSKDTreeInnerNode class]]);
 	
@@ -74,11 +74,11 @@
 	return self;
 }
 
-+ (instancetype)treeWithDimensions:(unsigned char)dimensions {
++ (instancetype)treeWithDimensions:(NSUInteger)dimensions {
 	return [[self alloc] initWithDimensions:dimensions innerNodeClass:NULL];
 }
 
-+ (instancetype)treeWithDimensions:(unsigned char)dimensions innerNodeClass:(Class)innerNodeClass {
++ (instancetype)treeWithDimensions:(NSUInteger)dimensions innerNodeClass:(Class)innerNodeClass {
 	return [[self alloc] initWithDimensions:dimensions innerNodeClass:innerNodeClass];
 }
 
@@ -147,11 +147,15 @@
 		NSMutableSet *addNodes = [NSMutableSet set];
 		NSMutableSet *removeNodes = [currentNodes mutableCopy];
 		
-		// TODO: Allow leaf root node
-		
 		if ([self.rootNode isKindOfClass:[HSKDTreeInnerNode class]]) {
 			HS_findNodesWithMinDistance((HSKDTreeInnerNode *) self.rootNode, self.dimensions,
 										minDistance, spaceCopy, keepNodes, addNodes, removeNodes);
+		} else if ([self.rootNode isKindOfClass:[HSKDTreeLeafNode class]]) {
+			HSKDTreeLeafNode *leafNode = (HSKDTreeLeafNode *) self.rootNode;
+			
+			if (HSKDTreeSpaceContainsPoint(spaceCopy, leafNode.point)) {
+				HS_foundNode(leafNode, keepNodes, addNodes, removeNodes);
+			}
 		}
 		
 		HSKDTreeReleaseSpace(spaceCopy);
@@ -166,8 +170,8 @@
 
 #pragma mark - Private methods
 
-HSKDTreeNode * HS_constructTree(NSArray *leafNodes, Class innerNodeClass, unsigned char dimensions,
-								unsigned char currentDimension, NSUInteger depth, HSKDTreeInnerNode *parentNode,
+HSKDTreeNode * HS_constructTree(NSArray *leafNodes, Class innerNodeClass, NSUInteger dimensions,
+								NSUInteger currentDimension, NSUInteger depth, HSKDTreeInnerNode *parentNode,
 								dispatch_queue_t dispatchQueue, dispatch_group_t dispatchGroup) {
 	
 	// Check for empty or single leafNodes
@@ -321,7 +325,7 @@ HSKDTreeLeafNode * HS_findNearestNeighborToPoint(HSKDTreeNode *node, HSKDTreePoi
     return nearestNode;
 }
 
-void HS_findNodesWithMinDistance(HSKDTreeInnerNode *node, unsigned char dimensions, double minDistance, HSKDTreeSpace space,
+void HS_findNodesWithMinDistance(HSKDTreeInnerNode *node, NSUInteger dimensions, double minDistance, HSKDTreeSpace space,
 								 NSMutableSet *keepNodes, NSMutableSet *addNodes, NSMutableSet *removeNodes) {
 	
 	double lowPointComponent = HSKDTreePointComponent(space.lowPoint, node.line.dimension);
@@ -334,7 +338,7 @@ void HS_findNodesWithMinDistance(HSKDTreeInnerNode *node, unsigned char dimensio
 	BOOL isLeftNodeInner = [node.leftNode isKindOfClass:[HSKDTreeInnerNode class]];
 	BOOL isRightNodeInner = [node.rightNode isKindOfClass:[HSKDTreeInnerNode class]];
 	
-	unsigned char nextDimension = (node.line.dimension + 1) % dimensions;
+	NSUInteger nextDimension = (node.line.dimension + 1) % dimensions;
 	
 	// Check if left and right nodes are leafs.
 	// If yes, add them (decluster) if line or distance between those nodes is greater or equal to minDistance.
@@ -415,11 +419,11 @@ void HS_findNodesWithMinDistance(HSKDTreeInnerNode *node, unsigned char dimensio
 	}
 }
 
-void HS_findNodesWithMinDistanceInner(HSKDTreeInnerNode *node, unsigned char dimensions, double minDistance, HSKDTreeSpace space,
+void HS_findNodesWithMinDistanceInner(HSKDTreeInnerNode *node, NSUInteger dimensions, double minDistance, HSKDTreeSpace space,
 									  NSMutableSet *keepNodes, NSMutableSet *addNodes, NSMutableSet *removeNodes,
 									  HSKDTreeInnerNode *innerNode, HSKDTreeLeafNode *leafNode) {
 	
-	unsigned char nextDimension = (node.line.dimension + 1) % dimensions;
+	NSUInteger nextDimension = (node.line.dimension + 1) % dimensions;
 	double leafNodePointComponent = HSKDTreePointComponent(leafNode.point, nextDimension);
 	double distance = fabs(innerNode.line.average - leafNodePointComponent);
 	

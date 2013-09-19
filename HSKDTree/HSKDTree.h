@@ -31,14 +31,14 @@
 
 @interface HSKDTree : NSObject
 
-@property (nonatomic, readonly) unsigned char dimensions;
+@property (nonatomic, readonly) NSUInteger dimensions;
 @property (nonatomic, readonly) Class innerNodeClass;
 
 @property (nonatomic, strong, readonly) HSKDTreeNode *rootNode;
 
-- (id)initWithDimensions:(unsigned char)dimensions innerNodeClass:(Class)innerNodeClass;
-+ (instancetype)treeWithDimensions:(unsigned char)dimensions;
-+ (instancetype)treeWithDimensions:(unsigned char)dimensions innerNodeClass:(Class)innerNodeClass;
+- (id)initWithDimensions:(NSUInteger)dimensions innerNodeClass:(Class)innerNodeClass;
++ (instancetype)treeWithDimensions:(NSUInteger)dimensions;
++ (instancetype)treeWithDimensions:(NSUInteger)dimensions innerNodeClass:(Class)innerNodeClass;
 
 - (void)constructTreeWithLeafNodes:(NSArray *)leafNodes completion:(void (^)(HSKDTreeNode *rootNode))block;
 - (void)findNearestNeighborToPoint:(HSKDTreePoint)point completion:(void (^)(HSKDTreeLeafNode *node))block;

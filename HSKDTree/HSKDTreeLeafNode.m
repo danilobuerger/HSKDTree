@@ -70,8 +70,8 @@
 - (double)squaredDistanceToPoint:(HSKDTreePoint)point {
     double squaredDistance = 0.0;
     
-	unsigned char dimensions = self.point.dimensions;
-    for (unsigned char d = 0; d < dimensions; d++) {
+	NSUInteger dimensions = self.point.dimensions;
+    for (NSUInteger d = 0; d < dimensions; d++) {
         squaredDistance += pow(HSKDTreePointComponent(self.point, d) - HSKDTreePointComponent(point, d), 2.0);
     }
     

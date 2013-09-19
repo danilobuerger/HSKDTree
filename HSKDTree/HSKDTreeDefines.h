@@ -30,7 +30,7 @@
 #pragma mark - Line
 
 typedef struct {
-	unsigned char dimension;
+	NSUInteger dimension;
 	double average;
 	double low;
 	double high;
@@ -40,7 +40,7 @@ typedef struct {
 extern const HSKDTreeLine HSKDTreeLineZero;
 extern const HSKDTreeLine HSKDTreeLineConstruct;
 
-static inline HSKDTreeLine HSKDTreeLineMake(unsigned char dimension, double average, double low, double high, double length) {
+static inline HSKDTreeLine HSKDTreeLineMake(NSUInteger dimension, double average, double low, double high, double length) {
 	HSKDTreeLine line;
 	line.dimension = dimension;
 	line.average = average;
@@ -56,18 +56,18 @@ extern NSString * NSStringFromHSKDTreeLine(HSKDTreeLine line);
 #pragma mark - Point
 
 typedef struct {
-	unsigned char dimensions;
+	NSUInteger dimensions;
 	double *components;
 } HSKDTreePoint;
 
-static inline double HSKDTreePointComponent(HSKDTreePoint point, unsigned char dimension) {
+static inline double HSKDTreePointComponent(HSKDTreePoint point, NSUInteger dimension) {
 	NSCParameterAssert(point.dimensions > dimension);
 	NSCParameterAssert(point.components != NULL);
 	
 	return point.components[dimension];
 }
 
-extern HSKDTreePoint HSKDTreeCreatePoint(unsigned char dimensions, ...);
+extern HSKDTreePoint HSKDTreeCreatePoint(NSUInteger dimensions, ...);
 extern HSKDTreePoint HSKDTreeCopyPoint(HSKDTreePoint point);
 extern void HSKDTreeReleasePoint(HSKDTreePoint point);
 extern NSString * NSStringFromHSKDTreePoint(HSKDTreePoint point);
@@ -79,9 +79,10 @@ typedef struct {
 	HSKDTreePoint highPoint;
 } HSKDTreeSpace;
 
-extern HSKDTreeSpace HSKDTreeCreateSpace(unsigned char dimensions, ...);
+extern HSKDTreeSpace HSKDTreeCreateSpace(NSUInteger dimensions, ...);
 extern HSKDTreeSpace HSKDTreeCopySpace(HSKDTreeSpace space);
 extern void HSKDTreeReleaseSpace(HSKDTreeSpace space);
+extern BOOL HSKDTreeSpaceContainsPoint(HSKDTreeSpace space, HSKDTreePoint point);
 extern NSString * NSStringFromHSKDTreeSpace(HSKDTreeSpace space);
 
 #endif

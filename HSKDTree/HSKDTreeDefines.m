@@ -36,7 +36,7 @@ NSString * NSStringFromHSKDTreeLine(HSKDTreeLine line) {
 
 #pragma mark - Point
 
-HSKDTreePoint HSKDTreeCreatePointV(unsigned char dimensions, va_list arguments) {
+HSKDTreePoint HSKDTreeCreatePointV(NSUInteger dimensions, va_list arguments) {
 	NSCParameterAssert(dimensions >= 2);
 	NSCParameterAssert(arguments != NULL);
 	
@@ -53,7 +53,7 @@ HSKDTreePoint HSKDTreeCreatePointV(unsigned char dimensions, va_list arguments) 
 	return point;
 }
 
-HSKDTreePoint HSKDTreeCreatePoint(unsigned char dimensions, ...) {
+HSKDTreePoint HSKDTreeCreatePoint(NSUInteger dimensions, ...) {
 	va_list arguments;
 	va_start(arguments, dimensions);
 	
@@ -85,7 +85,7 @@ void HSKDTreeReleasePoint(HSKDTreePoint point) {
 NSString * NSStringFromHSKDTreePoint(HSKDTreePoint point) {
 	NSMutableString *string = [NSMutableString stringWithString:@"point: {"];
 	
-	for (unsigned char d = 0; d < point.dimensions; d++) {
+	for (NSUInteger d = 0; d < point.dimensions; d++) {
 		if (d == 0) {
 			[string appendFormat:@" %f", HSKDTreePointComponent(point, d)];
 		} else {
@@ -100,7 +100,7 @@ NSString * NSStringFromHSKDTreePoint(HSKDTreePoint point) {
 
 #pragma mark - Space
 
-HSKDTreeSpace HSKDTreeCreateSpace(unsigned char dimensions, ...) {
+HSKDTreeSpace HSKDTreeCreateSpace(NSUInteger dimensions, ...) {
 	HSKDTreeSpace space;
 	
 	va_list arguments;
@@ -126,6 +126,20 @@ HSKDTreeSpace HSKDTreeCopySpace(HSKDTreeSpace space) {
 void HSKDTreeReleaseSpace(HSKDTreeSpace space) {
 	free(space.lowPoint.components);
 	free(space.highPoint.components);
+}
+
+BOOL HSKDTreeSpaceContainsPoint(HSKDTreeSpace space, HSKDTreePoint point) {
+	for (NSUInteger d = 0; d < point.dimensions; d++) {
+		double pointComponent = HSKDTreePointComponent(point, d);
+		double lowPointComponent = HSKDTreePointComponent(space.lowPoint, d);
+		double highPointComponent = HSKDTreePointComponent(space.highPoint, d);
+		
+		if (pointComponent < lowPointComponent || pointComponent > highPointComponent) {
+			return NO;
+		}
+	}
+	
+	return YES;
 }
 
 NSString * NSStringFromHSKDTreeSpace(HSKDTreeSpace space) {
